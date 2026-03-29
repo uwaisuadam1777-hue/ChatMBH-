@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ChatMBH</title>
+  <style>
+    body { background: black; color: white; font-family: Arial; text-align: center; padding: 20px; }
+    input { padding: 10px; width: 70%; margin-right: 10px; }
+    button { padding: 10px; }
+    #response { margin-top: 20px; font-size: 18px; }
+  </style>
+</head>
+<body>
+
+<h1>ChatMBH 🤖</h1>
+
+<input id="userInput" placeholder="Ask something..." />
+<button onclick="reply()">Send</button>
+
+<div id="response"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+async function reply() {
+  let input = document.getElementById("userInput").value;
+  let responseDiv = document.getElementById("response");
+  responseDiv.innerText = "Thinking... 🤖";
+
+  try {
+    const res = await axios.post(
+      "https://api.openai.com/v1/chat/completions",
+      {
+        model: "gpt-3.5-turbo",
+        messages: [{ role: "user", content: input }]
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "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"
+        }
+      }
+    );
+
+    const output = res.data.choices[0].message.content;
+    responseDiv.innerText = output;
+
+    // Voice reply
+    let speech = new SpeechSynthesisUtterance(output);
+    speechSynthesis.speak(speech);
+
+  } catch (error) {
+    responseDiv.innerText = "Error: " + error.message;
+  }
+}
+</script>
+
+</body>
+</html>
